@@ -1,8 +1,20 @@
-//
-//  ThemeView.swift
-//  Scrumdinger
-//
-//  Created by qingran shao on 4/17/24.
-//
+import SwiftUI
 
-import Foundation
+struct ThemeView: View {
+    let theme: Theme
+    var body: some View {
+        Text(theme.name)
+            .padding(4)
+            .frame(maxWidth: .infinity)
+            .background(theme.mainColor)
+            .foregroundColor(theme.accentColor)
+            .clipShape(RoundedRectangle(cornerRadius: 4))
+    }
+}
+
+struct ThemeView_Preview: PreviewProvider{
+    static var previews: some View
+    {
+        ThemeView(theme: .bubblegum)
+    }
+}

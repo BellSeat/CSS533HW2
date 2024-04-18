@@ -1,20 +1,16 @@
-//
-//  DetailView.swift
-//  Scrumdinger
-//
-//  Created by qingran shao on 4/17/24.
-//
-
 import Foundation
 import SwiftUI
 
 struct DetailView: View{
-    let scrum:DailyScrum
+    @Binding var scrum: DailyScrum
+    
+    @State private var editingScrum = DailyScrum.emptyScrum
+    @State private var isPresentingEditView = false
     
     var body: some View{
         List{
             Section(header: Text("Meeting Info")){
-                NavigationLink(destination: MeetingView())
+                NavigationLink(destination: MeetingView(scrum: $scrum))
                     {
                         Label("Start Meeting",systemImage: "timer")
                     }
@@ -39,15 +35,54 @@ struct DetailView: View{
             Section(header: Text("Attendess")){
                 ForEach(scrum.attendees){ attendee in Label(attendee.name, systemImage: "person")}
             }
+            
+            Section(header: Text("History")){
+                if scrum.history.isEmpty{
+                    Label("No eetings yet", systemImage: "calender.badge.exclamationmark")
+                }
+                ForEach(scrum.history){
+                    histroy in
+                    HStack{
+                        Image(systemName: "calendar")
+                        Text(histroy.date, style: .date)
+                    }
+                }
+            }
         }
         .navigationTitle(scrum.title)
+        .toolbar{
+            Button("Edit"){
+                isPresentingEditView = true
+                editingScrum = scrum
+            }
+        }
+        .sheet(isPresented: $isPresentingEditView){
+            NavigationStack{
+                DetailEditView(scrum: $editingScrum)
+                    .navigationTitle(scrum.title)
+                    .toolbar{
+                        ToolbarItem(placement: .cancellationAction){
+                            Button("Cancle"){
+                                isPresentingEditView = false
+                                
+                            }
+                        }
+                        ToolbarItem(placement: .confirmationAction){
+                            Button("Done"){
+                                isPresentingEditView = false
+                                scrum = editingScrum
+                            }
+                        }
+                    }
+            }
+        }
     }
 }
 
 struct DetailView_Previews: PreviewProvider{
     static var previews: some View{
         NavigationStack{
-            DetailView(scrum: DailyScrum.sampleData[0])
+            DetailView(scrum: .constant(DailyScrum.sampleData[0]))
         }
     }
 }

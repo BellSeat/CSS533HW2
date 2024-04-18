@@ -1,8 +1,22 @@
-//
-//  ThemePicker.swift
-//  Scrumdinger
-//
-//  Created by qingran shao on 4/17/24.
-//
+import SwiftUI
 
-import Foundation
+struct ThemePicker: View {
+    @Binding var selection: Theme
+    
+    var body: some View {
+        Picker("Theme", selection: $selection){
+            ForEach(Theme.allCases){
+                theme in ThemeView(theme: theme)
+                    .tag(theme)
+            }
+        }
+        .pickerStyle(.navigationLink)
+    }
+}
+
+struct ThemePicker_Previews: PreviewProvider{
+    static var previews: some View
+    {
+        ThemePicker(selection: .constant(.periwinkle))
+    }
+}
